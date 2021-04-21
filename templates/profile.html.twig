@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+    <a href="{{ path('profile') }}">Моя страница</a><br/>
+    <a href="{{ path('app_logout') }}">Logout</a>
+        {% if app.user.id == user.id %}
+            <h1>Моя страница</h1>
+            <a href="/friends/{{ app.user.id }}">Мои друзья</a><br/>
+            <a href="/friendsWithMe/{{ app.user.id }}">Я в друзьях</a><br/>
+            <a href="{{ path('settings') }}">Настройки</a>
+        {% else %}
+            <h1>Страница {{ user.username }}</h1>
+            <button onclick="addFriend()">Подписаться</button>
+            <button onclick="dropFriend()">Отписаться</button>
+            Друзья <a href="/friends/{{ user.id }}"><i>{{ user.username }}</i></a>
+            <br/>
+        {% endif %}
+
+             <div class="mb-3">
+                 <a href="{{ path('users') }}">Все пользователи</a><br/>
+
+            </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function addFriend(){
+            $.ajax({
+                url: '/addFriend/{{ user.id }}',
+                method: 'POST',
+            })
+        }
+        function dropFriend(){
+            $.ajax({
+                url: '/dropFriend/{{ user.id }}',
+                method: 'POST',
+            })
+        }
+    </script>
+{% endblock %}

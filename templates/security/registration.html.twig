@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Registration!{% endblock %}
+
+{% block body %}
+    {{ errors }}
+    <form method="post" action="{{ path('registrate') }}">
+        <h1 class="h3 mb-3 font-weight-normal">Please registrate</h1>
+        <label for="inputusername">Username</label>
+        <input type="text" name="username" id="inputusername" class="form-control" required autofocus>
+        <label for="inputPassword">Password</label>
+        <input type="password" name="password1" id="inputPassword1" class="form-control" required>
+
+        <label for="inputPassword">Repeat password</label>
+        <input type="password" name="password2" id="inputPassword2" class="form-control" required>
+
+        <input type="hidden" name="_csrf_token"
+               value="{{ csrf_token('registration') }}"
+        >
+        <input class="btn btn-lg btn-primary" type="submit" value="Registrate" >
+
+    </form>
+{% endblock %}
