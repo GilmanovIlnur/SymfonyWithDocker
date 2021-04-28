@@ -29,12 +29,17 @@ class FriendsController extends AbstractController
     /**
      * @Route("friends/{userId}", name="friends")
      */
-    public function friends($userId)
+    public function friends(int $userId)
     {
         $user = $this->userRepository->findOneBy(['id' => $userId]);
-        return $this->render('users/friends.html.twig', [
-            'title' => 'Мои друзья',
-            'friends' => $user->getMyFriends(),
+        if ($this->getUser()->getId() === $userId) {
+            $title = 'Мои друзья';
+        } else {
+            $title = 'Друзья' . $user->getUsername();
+        }
+        return $this->render('users/users.html.twig', [
+            'title' => $title,
+            'users' => $user->getMyFriends(),
             'user' => $user,
         ]);
     }
@@ -42,12 +47,17 @@ class FriendsController extends AbstractController
     /**
      * @Route("friendsWithMe/{userId}", name="friendsWithMe")
      */
-    public function friendsWithMe($userId)
+    public function friendsWithMe(int $userId)
     {
         $user = $this->userRepository->findOneBy(['id' => $userId]);
-        return $this->render('users/friends.html.twig', [
-            'title' => 'Я в друзьях',
-            'friends' => $user->getFriendsWithMe(),
+        if ($this->getUser()->getId() === $userId) {
+            $title = 'Я в друзьях';
+        } else {
+            $title = $user->getUsername() . ' в друзьях';
+        }
+        return $this->render('users/users.html.twig', [
+            'title' => $title,
+            'users' => $user->getFriendsWithMe(),
             'user' => $user,
         ]);
     }

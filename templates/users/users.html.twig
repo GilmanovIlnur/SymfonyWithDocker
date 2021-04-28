@@ -1,12 +1,48 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+{% endblock %}
 {% block body %}
     <h1>
-        Все пользователи
+        {{ title }}
     </h1>
-    {% for user in users %}
-        {{ loop.index }}.
-        <a href="profile/{{ user.id }}">{{ user.username }}</a>
-        <br/>
-    {% endfor %}
+    <table>
+        <tr>
+            <th>№</th>
+            <th>Ник</th>
+            <th>Фамилия</th>
+            <th>Имя</th>
+            <th>Действия</th>
+        </tr>
+        {% if users|length > 0 %}
+            {% for user in users %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.getUserInfo.getLastname }}</td>
+                    <td>{{ user.getUserInfo.getFirstname }}</td>
+                    <td><a href="/profile/{{ user.id }}">Перейти в профиль</a></td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <td colspan="5" style="text-align: center">Пусто</td>
+        {% endif %}
+    </table>
 {% endblock %}

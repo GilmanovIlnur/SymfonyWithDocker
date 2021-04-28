@@ -3,8 +3,6 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-    <a href="{{ path('profile') }}">Моя страница</a><br/>
-    <a href="{{ path('app_logout') }}">Logout</a>
         {% if app.user.id == user.id %}
             <h1>Моя страница</h1>
             {% if user.userInfo %}
