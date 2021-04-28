@@ -54,6 +54,11 @@ class User implements UserInterface
      */
     private $myFriends;
 
+    /**
+     * @ORM\OneToOne(targetEntity=UserInfo::class, mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $userInfo;
+
     public function __construct()
     {
         $this->friendsWithMe = new ArrayCollection();
@@ -193,5 +198,27 @@ class User implements UserInterface
     public function removeFriendWithMe(User $friendWithMe)
     {
         $this->friendsWithMe->removeElement($friendWithMe);
+    }
+
+    public function getUserInfo(): ?UserInfo
+    {
+        return $this->userInfo;
+    }
+
+    public function setUserInfo(?UserInfo $userInfo): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($userInfo === null && $this->userInfo !== null) {
+            $this->userInfo->setUser(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($userInfo !== null && $userInfo->getUser() !== $this) {
+            $userInfo->setUser($this);
+        }
+
+        $this->userInfo = $userInfo;
+
+        return $this;
     }
 }
