@@ -59,10 +59,17 @@ class User implements UserInterface
      */
     private $userInfo;
 
+    /**
+     * @ORM\OneToMany(targetEntity=WallMessage::class, mappedBy="user")
+     * @ORM\OrderBy({"time" = "DESC"})
+     */
+    private $wallMessages;
+
     public function __construct()
     {
         $this->friendsWithMe = new ArrayCollection();
         $this->myFriends = new ArrayCollection();
+        $this->wallMessages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -218,6 +225,36 @@ class User implements UserInterface
         }
 
         $this->userInfo = $userInfo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|WallMessage[]
+     */
+    public function getWallMessages(): Collection
+    {
+        return $this->wallMessages;
+    }
+
+    public function addWallMessage(WallMessage $wallMessage): self
+    {
+        if (!$this->wallMessages->contains($wallMessage)) {
+            $this->wallMessages[] = $wallMessage;
+            $wallMessage->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWallMessage(WallMessage $wallMessage): self
+    {
+        if ($this->wallMessages->removeElement($wallMessage)) {
+            // set the owning side to null (unless already changed)
+            if ($wallMessage->setUser() === $this) {
+                $wallMessage->setUser(null);
+            }
+        }
 
         return $this;
     }

@@ -4,6 +4,7 @@
 namespace App\Helper;
 
 
+use App\Entity\UserInfo;
 use App\Repository\UserInfoRepository;
 
 class UserInfoHelper
@@ -17,7 +18,7 @@ class UserInfoHelper
 
     public function findOrCreate($userId)
     {
-        return $this->userInfoRepository->findOneBy(['user' => $userId]);
+        return $this->userInfoRepository->findOneBy(['user' => $userId]) ?: (new UserInfo());
     }
 
 }

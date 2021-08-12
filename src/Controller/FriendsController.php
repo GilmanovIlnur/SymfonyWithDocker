@@ -4,8 +4,6 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
-use App\Service\AbstractEntityService;
 use App\Service\FriendService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,24 +16,20 @@ class FriendsController extends AbstractController
      */
     private $friendService;
 
-    private $userRepository;
-
-    public function __construct(UserRepository $userRepository, FriendService $friendService)
+    public function __construct(FriendService $friendService)
     {
-        $this->userRepository = $userRepository;
         $this->friendService = $friendService;
     }
 
     /**
-     * @Route("friends/{userId}", name="friends")
+     * @Route("friends/{id}", name="friends")
      */
-    public function friends(int $userId)
+    public function friends(User $user)
     {
-        $user = $this->userRepository->findOneBy(['id' => $userId]);
-        if ($this->getUser()->getId() === $userId) {
+        if ($this->getUser()->getId() === $user->getId()) {
             $title = 'Мои друзья';
         } else {
-            $title = 'Друзья' . $user->getUsername();
+            $title = 'Друзья ' . $user->getUsername();
         }
         return $this->render('users/users.html.twig', [
             'title' => $title,
@@ -45,12 +39,11 @@ class FriendsController extends AbstractController
     }
 
     /**
-     * @Route("friendsWithMe/{userId}", name="friendsWithMe")
+     * @Route("friendsWithMe/{id}", name="friendsWithMe")
      */
-    public function friendsWithMe(int $userId)
+    public function friendsWithMe(User $user)
     {
-        $user = $this->userRepository->findOneBy(['id' => $userId]);
-        if ($this->getUser()->getId() === $userId) {
+        if ($this->getUser()->getId() === $user->getId()) {
             $title = 'Я в друзьях';
         } else {
             $title = $user->getUsername() . ' в друзьях';
@@ -63,23 +56,25 @@ class FriendsController extends AbstractController
     }
 
     /**
-     * @Route("addFriend/{userId}")
-     * @param $userId
+     * @Route("addFriend/{id}")
+     * @param User $user
      * @return RedirectResponse
      */
-    public function addFriend($userId): RedirectResponse
+    public function addFriend(User $user): RedirectResponse
     {
-        $this->friendService->add($userId);
+        $this->friendService->add($user, $this->getUser());
 
         return $this->redirectToRoute('profile');
     }
 
     /**
-     * @Route("dropFriend/{userId}")
+     * @Route("dropFriend/{id}")
+     * @param User $user
+     * @return RedirectResponse
      */
-    public function dropFriend($userId)
+    public function dropFriend(User $user)
     {
-        $this->friendService->remove($userId);
+        $this->friendService->remove($user, $this->getUser());
 
         return $this->redirectToRoute('profile');
     }

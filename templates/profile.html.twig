@@ -30,6 +30,70 @@
              <div class="mb-3">
                  <a href="{{ path('users') }}">Все пользователи</a><br/>
             </div>
+
+        <div class="wall_message">
+            <h2>Новости</h2>
+            <form action="{{ path('message_create') }}" method="post">
+                <input type="text" name="text">
+                <input type="submit" value="Добавить">
+            </form>
+            <br/>
+            {% for wallMessage in user.getWallMessages %}
+                <div class="message_row" style="margin: 10px;width: 100%">
+                    <i style="color: red" id="message_text_{{ wallMessage.id }}">
+                        {{ wallMessage.text }}
+                    </i>
+                    <span style="display: none" id="message_input{{ wallMessage.id }}">
+                                <input id="message_inp_{{ wallMessage.id }}" type="text" value="">
+                            </span>
+                        {{ wallMessage.time|date('d-m-Y H:i:s') }}
+                        {% if wallMessage.editTime %}
+                            <br/>
+                            <i style="font-size: 10px">Изменен: {{ wallMessage.editTime|date('d-m-Y H:i:s') }}</i>
+                        {% endif %}
+                        <input type="button" value="x" onclick="deleteMessage({{ wallMessage.id }})">
+                        <div id="edit_{{ wallMessage.id }}">
+                            <input type="button" value="Изменить" onclick="editMessage({{ wallMessage.id }})">
+                        </div>
+                        <div style="display: none" id="update_{{ wallMessage.id }}">
+                            <input type="button" value="Сохранить" onclick="updateMessage({{ wallMessage.id }})">
+                        </div>
+                </div>
+            {% endfor %}
+{#            <table style="border: 1px solid black; border-collapse: collapse">#}
+{#                {% for wallMessage in user.getWallMessages %}#}
+{#                    <tr style="margin: ">#}
+{#                        <td>#}
+{#                            <i style="color: red" id="message_text_{{ wallMessage.id }}">#}
+{#                                {{ wallMessage.text }}#}
+{#                            </i>#}
+{#                            <span style="display: none" id="message_input{{ wallMessage.id }}">#}
+{#                                <input id="message_inp_{{ wallMessage.id }}" type="text" value="">#}
+{#                            </span>#}
+{#                        </td>#}
+{#                        <td style="font-size: 12px">#}
+{#                            {{ wallMessage.time|date('d-m-Y H:i:s') }}#}
+{#                            {% if wallMessage.editTime %}#}
+{#                                <br/>#}
+{#                                <i>Изменен: {{ wallMessage.editTime|date('d-m-Y H:i:s') }}</i>#}
+{#                            {% endif %}#}
+{#                        </td>#}
+{#                        <td>#}
+{#                            <input type="button" value="x" onclick="deleteMessage({{ wallMessage.id }})">#}
+{#                        </td>#}
+{#                        <td>#}
+{#                            <div id="edit_{{ wallMessage.id }}">#}
+{#                                <input type="button" value="Изменить" onclick="editMessage({{ wallMessage.id }})">#}
+{#                            </div>#}
+{#                            <div style="display: none" id="update_{{ wallMessage.id }}">#}
+{#                                <input type="button" value="Сохранить" onclick="updateMessage({{ wallMessage.id }})">#}
+{#                            </div>#}
+{#                        </td>#}
+{#                    </tr>#}
+{#                {% endfor %}#}
+{#            </table>#}
+
+        </div>
 {% endblock %}
 
 {% block javascripts %}
@@ -44,6 +108,38 @@
             $.ajax({
                 url: '/dropFriend/{{ user.id }}',
                 method: 'POST',
+            })
+        }
+
+        function editMessage(id) {
+            document.getElementById("message_input" + id).style.display = 'block';
+            document.getElementById("message_text_" + id).style.display = 'none';
+            document.getElementById("edit_" + id).style.display = 'none';
+            document.getElementById("update_" + id).style.display = 'block';
+            text = document.getElementById("message_text_" + id).textContent;
+            document.getElementById("message_input" + id).children[0].value = $.trim(text);
+        }
+
+        function updateMessage(id){
+            $.ajax({
+                url: '/message/update/' + id,
+                method: 'POST',
+                data: {
+                    'text': document.getElementById("message_inp_" + id).value,
+                },
+                success: function (data) {
+                    window.location.reload();
+                }
+            })
+        }
+
+        function deleteMessage(id) {
+            $.ajax({
+                url: '/message/delete/' + id,
+                method: 'POST',
+                success: function (data) {
+                    window.location.reload();
+                }
             })
         }
     </script>

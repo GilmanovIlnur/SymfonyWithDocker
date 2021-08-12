@@ -36,8 +36,14 @@
                 <tr>
                     <td>{{ loop.index }}</td>
                     <td>{{ user.username }}</td>
-                    <td>{{ user.getUserInfo.getLastname }}</td>
-                    <td>{{ user.getUserInfo.getFirstname }}</td>
+                    {% if user.getUserInfo %}
+                        <td>{{ user.getUserInfo.getLastname }}</td>
+                        <td>{{ user.getUserInfo.getFirstname }}</td>
+                    {% else %}
+                        <td>не указано</td>
+                        <td>не указано</td>
+                    {% endif %}
+
                     <td><a href="/profile/{{ user.id }}">Перейти в профиль</a></td>
                 </tr>
             {% endfor %}

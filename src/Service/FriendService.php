@@ -3,32 +3,29 @@
 
 namespace App\Service;
 
+use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class FriendService extends AbstractEntityService
+class FriendService
 {
+    private $entityManager;
 
-    private $userRepository;
-
-    public function __construct(
-        UserRepository $userRepository,
-        EntityManagerInterface $entityManager,
-        TokenStorageInterface $tokenStorage)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        parent::__construct($entityManager, $tokenStorage);
-        $this->userRepository = $userRepository;
+        $this->entityManager = $entityManager;
     }
-    public function add($id)
+
+    public function add(User $user, User $current)
     {
-        $this->getUser()->addMyFriends($this->userRepository->findOneBy(['id' => $id]));
+        $current->addMyFriends($user);
         $this->entityManager->flush();
     }
 
-    public function remove($id)
+    public function remove(User $user, User $current)
     {
-        $this->getUser()->removeMyFriend($this->userRepository->findOneBy(['id' => $id]));
+        $current->removeMyFriend($user);
         $this->entityManager->flush();
     }
 }

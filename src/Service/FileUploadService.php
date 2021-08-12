@@ -21,7 +21,7 @@ class FileUploadService
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
         $newFilename = $safeFilename . '-' . uniqid(). '.' . $file->guessExtension();
-var_dump($newFilename);
+
         try {
             $file->move(
                 $storageDirectory,
