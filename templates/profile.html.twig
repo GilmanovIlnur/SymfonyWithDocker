@@ -3,97 +3,39 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-        {% if app.user.id == user.id %}
-            <h1>Моя страница</h1>
-            {% if user.userInfo %}
-                Имя: {{ user.userInfo.getFirstname }}<br/>
-                Фамилия: {{ user.userInfo.getLastname }}<br/><br/>
-                <img style=" border-radius: 8px;width: 150px;border: 1px solid #ddd;" src={{ '/getFile/photos/' ~ user.userInfo.photoFilename }}><br/>
+    <div class="container">
+        <div class="user__block">
+            {% if app.user.id == user.id %}
+                <h2>Моя страница</h2>
+                {% if user.userInfo %}
+                    Имя: {{ user.userInfo.getFirstname }}<br/>
+                    Фамилия: {{ user.userInfo.getLastname }}<br/><br/>
+                    <img style=" border-radius: 8px;width: 150px;border: 1px solid #ddd;" src={{ '/getFile/photos/' ~ user.userInfo.photoFilename }}><br/>
+                {% endif %}
+
+                <a href="/friends/{{ app.user.id }}">Мои друзья</a><br/>
+                <a href="/friendsWithMe/{{ app.user.id }}">Я в друзьях</a><br/>
+                <a href="{{ path('settings') }}">Настройки</a>
+            {% else %}
+                <h2>Страница {{ user.username }}</h2>
+                {% if user.userInfo %}
+                    Имя: {{ user.userInfo.getFirstname }}<br/>
+                    Фамилия: {{ user.userInfo.getLastname }}<br/><br/>
+                    <img style=" border-radius: 8px;width: 150px;border: 1px solid #ddd;" src={{ '/getFile/photos/' ~ user.userInfo.photoFilename }}><br/>
+                {% endif %}
+                <button onclick="addFriend()">Подписаться</button>
+                <button onclick="dropFriend()">Отписаться</button>
+                Друзья <a href="/friends/{{ user.id }}"><i>{{ user.username }}</i></a>
+                <br/>
             {% endif %}
 
-            <a href="/friends/{{ app.user.id }}">Мои друзья</a><br/>
-            <a href="/friendsWithMe/{{ app.user.id }}">Я в друзьях</a><br/>
-            <a href="{{ path('settings') }}">Настройки</a>
-        {% else %}
-            <h1>Страница {{ user.username }}</h1>
-            {% if user.userInfo %}
-                Имя: {{ user.userInfo.getFirstname }}<br/>
-                Фамилия: {{ user.userInfo.getLastname }}<br/><br/>
-                <img style=" border-radius: 8px;width: 150px;border: 1px solid #ddd;" src={{ '/getFile/photos/' ~ user.userInfo.photoFilename }}><br/>
-            {% endif %}
-            <button onclick="addFriend()">Подписаться</button>
-            <button onclick="dropFriend()">Отписаться</button>
-            Друзья <a href="/friends/{{ user.id }}"><i>{{ user.username }}</i></a>
-            <br/>
-        {% endif %}
-
-             <div class="mb-3">
-                 <a href="{{ path('users') }}">Все пользователи</a><br/>
+            <div class="mb-3">
+                <a href="{{ path('users') }}">Все пользователи</a><br/>
             </div>
-
-        <div class="wall_message">
-            <h2>Новости</h2>
-            <form action="{{ path('message_create') }}" method="post">
-                <input type="text" name="text">
-                <input type="submit" value="Добавить">
-            </form>
-            <br/>
-            {% for wallMessage in user.getWallMessages %}
-                <div class="message_row" style="margin: 10px;width: 100%">
-                    <i style="color: red" id="message_text_{{ wallMessage.id }}">
-                        {{ wallMessage.text }}
-                    </i>
-                    <span style="display: none" id="message_input{{ wallMessage.id }}">
-                                <input id="message_inp_{{ wallMessage.id }}" type="text" value="">
-                            </span>
-                        {{ wallMessage.time|date('d-m-Y H:i:s') }}
-                        {% if wallMessage.editTime %}
-                            <br/>
-                            <i style="font-size: 10px">Изменен: {{ wallMessage.editTime|date('d-m-Y H:i:s') }}</i>
-                        {% endif %}
-                        <input type="button" value="x" onclick="deleteMessage({{ wallMessage.id }})">
-                        <div id="edit_{{ wallMessage.id }}">
-                            <input type="button" value="Изменить" onclick="editMessage({{ wallMessage.id }})">
-                        </div>
-                        <div style="display: none" id="update_{{ wallMessage.id }}">
-                            <input type="button" value="Сохранить" onclick="updateMessage({{ wallMessage.id }})">
-                        </div>
-                </div>
-            {% endfor %}
-{#            <table style="border: 1px solid black; border-collapse: collapse">#}
-{#                {% for wallMessage in user.getWallMessages %}#}
-{#                    <tr style="margin: ">#}
-{#                        <td>#}
-{#                            <i style="color: red" id="message_text_{{ wallMessage.id }}">#}
-{#                                {{ wallMessage.text }}#}
-{#                            </i>#}
-{#                            <span style="display: none" id="message_input{{ wallMessage.id }}">#}
-{#                                <input id="message_inp_{{ wallMessage.id }}" type="text" value="">#}
-{#                            </span>#}
-{#                        </td>#}
-{#                        <td style="font-size: 12px">#}
-{#                            {{ wallMessage.time|date('d-m-Y H:i:s') }}#}
-{#                            {% if wallMessage.editTime %}#}
-{#                                <br/>#}
-{#                                <i>Изменен: {{ wallMessage.editTime|date('d-m-Y H:i:s') }}</i>#}
-{#                            {% endif %}#}
-{#                        </td>#}
-{#                        <td>#}
-{#                            <input type="button" value="x" onclick="deleteMessage({{ wallMessage.id }})">#}
-{#                        </td>#}
-{#                        <td>#}
-{#                            <div id="edit_{{ wallMessage.id }}">#}
-{#                                <input type="button" value="Изменить" onclick="editMessage({{ wallMessage.id }})">#}
-{#                            </div>#}
-{#                            <div style="display: none" id="update_{{ wallMessage.id }}">#}
-{#                                <input type="button" value="Сохранить" onclick="updateMessage({{ wallMessage.id }})">#}
-{#                            </div>#}
-{#                        </td>#}
-{#                    </tr>#}
-{#                {% endfor %}#}
-{#            </table>#}
-
         </div>
+        {% include 'wall_message_block.twig' %}
+
+    </div>
 {% endblock %}
 
 {% block javascripts %}
@@ -143,4 +85,10 @@
             })
         }
     </script>
+{% endblock %}
+
+{% block stylesheets %}
+<style>
+    {% include 'css/profile.css' %}
+</style>
 {% endblock %}
