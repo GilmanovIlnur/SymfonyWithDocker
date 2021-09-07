@@ -35,6 +35,11 @@ services:
         tags:
             - { name: controller.request_value_resolver, priority: 50 }
 
+    App\Listener\ResponseListener:
+        arguments:
+            - '@twig'
+        tags:
+            - {name: kernel.event_listener, event: kernel.request}
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

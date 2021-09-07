@@ -10,7 +10,14 @@
                 {% if user.userInfo %}
                     Имя: {{ user.userInfo.getFirstname }}<br/>
                     Фамилия: {{ user.userInfo.getLastname }}<br/><br/>
-                    <img style=" border-radius: 8px;width: 150px;border: 1px solid #ddd;" src={{ '/getFile/photos/' ~ user.userInfo.photoFilename }}><br/>
+                    <img style=" border-radius: 8px;width: 150px;border: 1px solid #ddd;" onclick="changeSize(this)" src={{ '/getFile/photos/' ~ user.userInfo.photoFilename }}><br/>
+                    <span style="font-size: 10px">нажмите для увеличения/уменьшения...</span><br/>
+                    <a href="{{ '/downloadFile/photos/' ~ user.userInfo.photoFilename }}">Скачать</a>
+                    <form action="{{ '/delete/photos/' ~ user.userInfo.photoFilename }}" method="post">
+                        <input type="submit" value="Удалить">
+                    </form>
+                    <br/>
+                    <br/>
                 {% endif %}
 
                 <a href="/friends/{{ app.user.id }}">Мои друзья</a><br/>
@@ -40,6 +47,7 @@
 
 {% block javascripts %}
     <script>
+        let increased = false;
         function addFriend(){
             $.ajax({
                 url: '/addFriend/{{ user.id }}',
@@ -83,6 +91,17 @@
                     window.location.reload();
                 }
             })
+        }
+
+        function changeSize(image)
+        {
+            if (increased) {
+                image.style.width = '150px';
+            } else {
+                image.style.width = '350px';
+            }
+
+            increased = !increased;
         }
     </script>
 {% endblock %}

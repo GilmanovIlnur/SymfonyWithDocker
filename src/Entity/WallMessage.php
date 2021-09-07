@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\WallMessageRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -37,6 +39,16 @@ class WallMessage
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $editTime;
+
+    /**
+     * @ORM\OneToMany(targetEntity=MessageLike::class, mappedBy="message", orphanRemoval=true)
+     */
+    private $messageLikes;
+
+    public function __construct()
+    {
+        $this->messageLikes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -94,6 +106,36 @@ class WallMessage
     public function setEditTime($editTime): self
     {
         $this->editTime = $editTime;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|MessageLike[]
+     */
+    public function getMessageLikes(): Collection
+    {
+        return $this->messageLikes;
+    }
+
+    public function addMessageLike(MessageLike $messageLike): self
+    {
+        if (!$this->messageLikes->contains($messageLike)) {
+            $this->messageLikes[] = $messageLike;
+            $messageLike->setMessage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessageLike(MessageLike $messageLike): self
+    {
+        if ($this->messageLikes->removeElement($messageLike)) {
+            // set the owning side to null (unless already changed)
+            if ($messageLike->getMessage() === $this) {
+                $messageLike->setMessage(null);
+            }
+        }
 
         return $this;
     }
